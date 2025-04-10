@@ -1,24 +1,67 @@
+#include <stdlib.h>
 #include "linked_list.h"
 
-#include <stdlib.h>
+struct node* insert_at_head(struct node* head, int value) {
+    struct node* new_node = malloc(sizeof(struct node));
+    if (!new_node) return NULL;
 
-struct list_node *new_node(size_t value) { return NULL; }
+    new_node->value = value;
+    new_node->next = head;
+    return new_node;
+}
 
-void insert_at_head(struct linked_list *list, size_t value) {}
+struct node* insert_at_tail(struct node* head, int value) {
+    struct node* new_node = malloc(sizeof(struct node));
+    if (!new_node) return NULL;
 
-void insert_at_tail(struct linked_list *list, size_t value) {}
+    new_node->value = value;
+    new_node->next = NULL;
 
-size_t remove_from_head(struct linked_list *list) { return 0; }
+    if (!head) {
+        return new_node;
+    }
 
-size_t remove_from_tail(struct linked_list *list) { return 0; }
+    struct node* temp = head;
+    while (temp->next) {
+        temp = temp->next;
+    }
+    temp->next = new_node;
+    return head;
+}
 
-void free_list(struct linked_list list) {}
+struct node* remove_from_head(struct node* head, int* value) {
+    if (!head) return NULL;
 
-// Utility function to help you debugging, do not modify
-void dump_list(FILE *fp, struct linked_list list) {
-  fprintf(fp, "[ ");
-  for (struct list_node *cur = list.head; cur != NULL; cur = cur->next) {
-    fprintf(fp, "%zu ", cur->value);
-  }
-  fprintf(fp, "]\n");
+    *value = head->value;
+    struct node* temp = head->next;
+    free(head);
+    return temp;
+}
+
+struct node* remove_from_tail(struct node* head, int* value) {
+    if (!head) return NULL;
+
+    if (!head->next) {
+        *value = head->value;
+        free(head);
+        return NULL;
+    }
+
+    struct node* temp = head;
+    while (temp->next->next) {
+        temp = temp->next;
+    }
+
+    *value = temp->next->value;
+    free(temp->next);
+    temp->next = NULL;
+    return head;
+}
+
+void free_list(struct node* head) {
+    while (head) {
+        struct node* temp = head;
+        head = head->next;
+        free(temp);
+    }
 }
